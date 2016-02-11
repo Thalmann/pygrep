@@ -3,7 +3,6 @@ from termcolor import colored
 import argparse
 
 cwd = os.getcwd()
-files = list()
 dirs = list()
 hits = list()
 
@@ -12,13 +11,18 @@ parser.add_argument('search_term')
 args = parser.parse_args()
 search_term = args.search_term
 
-def get_files(path, recursive=True):
+def get_files_recursive(path):
+    files = list()
     for dir_path, dir_names, file_names in os.walk(path):
         for file_name in file_names:
             files.append(os.path.join(dir_path,file_name))
         for dir_name in dir_names:
             dirs.append(os.path.join(dir_path, dir_name))
-        
+    return files
+            
+def get_files(path):
+    return os.listdir(path)
+
 def search_file(file_path, search_term):
     with open(file_path, 'r') as f:
         try:
@@ -34,12 +38,9 @@ def search_file(file_path, search_term):
 def highlight_search_term(line, search_term):
     return line.replace(search_term,colored(search_term, 'red'))
 
-get_files('.')
 
-#print(files)
-#print(dirs)
 
-for f in files:
+for f in get_files_recursive('.'):
     search_file(f, search_term)
 
 file_number = input('Insert file number:\n')
