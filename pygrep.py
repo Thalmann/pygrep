@@ -16,10 +16,12 @@ def get_files(path, recursive=True):
 def search_file(file_path, keyword):
     with open(file_path, 'r') as f:
         try:
+            line_number = 0
             for line in f:
+                line_number += 1
                 if keyword in line:
                     hits.append(file_path)
-                    print(str(len(hits)) + ':     ' + file_path + ':     ' + highlight_keyword(line, keyword))
+                    print(str(len(hits)) + colored(': ', 'blue') + file_path + colored(': ', 'blue') + str(line_number)+ ':' + highlight_keyword(line, keyword))
         except UnicodeDecodeError:
             return
 
