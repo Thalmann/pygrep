@@ -2,9 +2,29 @@ import os
 from termcolor import colored
 import argparse
 
+
+hits = list()
+
+def highlight_search_term(line, search_term):
+    return line.replace(search_term,colored(search_term, 'red'))
+
+class Hit:
+    """A Hit is when a search term is located in a line the information is stored in a Hit."""
+
+    def __init__(self, file_path, search_term, line='NA', line_number=0, is_path=False):
+        self.file_path = file_path
+        self.search_term = search_term
+        if not is_path:
+            self.line = line
+            self.line_number = line_number
+
+    def print_hit(self):
+        print(str(len(hits)) + colored(': ', 'blue') + self.file_path + colored(': ', 'blue') + str(self.line_number)+ ':' + highlight_search_term(self.line, self.search_term))
+
+
 cwd = os.getcwd()
 dirs = list()
-hits = list()
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('search_term', help='insert the search term you want to search for')
@@ -34,13 +54,14 @@ def search_file(file_path, search_term):
             for line in f:
                 line_number += 1
                 if search_term in line:
-                    hits.append(file_path)
-                    print(str(len(hits)) + colored(': ', 'blue') + file_path + colored(': ', 'blue') + str(line_number)+ ':' + highlight_search_term(line, search_term))
+                    hits.append(Hit(file_path, search_term, line, line_number))
         except UnicodeDecodeError:
             return
 
-def highlight_search_term(line, search_term):
-    return line.replace(search_term,colored(search_term, 'red'))
+def search_path_name(path, search_term):
+    if search_term in path:
+        hits.append(Hit(path, search_term, is_path=True))
+        
 
 
 if recursive_search:
@@ -50,5 +71,7 @@ else:
     for f in get_files('.'):
         search_file(f, search_term)
 
+for h in hits:
+    h.print_hit()
 file_number = input('Insert file number:\n')
 print(hits[int(file_number)-1])
