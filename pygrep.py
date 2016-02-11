@@ -4,7 +4,7 @@ from termcolor import colored
 cwd = os.getcwd()
 files = list()
 dirs = list()
-success_files = list()
+hits = list()
 
 def get_files(path, recursive=True):
     for dir_path, dir_names, file_names in os.walk(path):
@@ -18,8 +18,8 @@ def search_file(file_path, keyword):
         try:
             for line in f:
                 if keyword in line:
-                    success_files.append(file_path)
-                    print(str(len(success_files)) + ':     ' + file_path + ':     ' + highlight_keyword(line, keyword))
+                    hits.append(file_path)
+                    print(str(len(hits)) + ':     ' + file_path + ':     ' + highlight_keyword(line, keyword))
         except UnicodeDecodeError:
             return
 
@@ -35,4 +35,4 @@ for f in files:
     search_file(f, 'ECB')
 
 file_number = input('Insert file number:\n')
-print(success_files[int(file_number)-1])
+print(hits[int(file_number)-1])
